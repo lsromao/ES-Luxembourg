@@ -1,0 +1,29 @@
+version: '3.0'
+
+services:
+
+  flask:
+    build: ./web
+    restart: always
+    container_name: web_
+    ports:
+      - 5000:5000
+    environment:
+      PYTHONUNBUFFERED: 0
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./web:/app
+    
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    container_name: elasticsearch_node
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - cluster.name=es-docker-cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
